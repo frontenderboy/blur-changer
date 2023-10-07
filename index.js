@@ -65,7 +65,7 @@ downloadButton.addEventListener('click', () => {
     canvas.height = originalHeight;
     ctx.filter = `blur(${rangeInput.value}px)`;
     ctx.drawImage(image, 0, 0, originalWidth, originalHeight);
-    const blurredImageDataURL = canvas.toDataURL('image/jpeg', 0.4);
+    const blurredImageDataURL = canvas.toDataURL('image/jpeg', 1);
     const downloadLink = document.createElement('a');
     downloadLink.href = blurredImageDataURL;
     downloadLink.download = 'blurred_image.jpg';
