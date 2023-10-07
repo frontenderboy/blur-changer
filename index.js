@@ -24,7 +24,7 @@ addFileBtn.addEventListener('change', () => {
         downloadButton.classList.remove('none')
         innerImage.style.border = 'none'
         innerImage.style.boxShadow = 'none'
-        document.querySelector('.svg-inner').classList.add('none')
+        document.querySelector('.upload-btn').classList.add('none')
     }
 
     const selectedFile = files[0]
@@ -50,8 +50,14 @@ addFileBtn.addEventListener('change', () => {
 
 
 downloadButton.addEventListener('click', () => {
+    const loaderWrapper = document.querySelector('.loading-wrapper')
+    const loader = document.querySelector('.loading')
+    loaderWrapper.style.display = 'flex'
+    loader.classList.toggle('none')
+    
     const originalWidth = fakeImg.width;
     const originalHeight = fakeImg.height;
+
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -59,9 +65,15 @@ downloadButton.addEventListener('click', () => {
     canvas.height = originalHeight;
     ctx.filter = `blur(${rangeInput.value}px)`;
     ctx.drawImage(image, 0, 0, originalWidth, originalHeight);
-    const blurredImageDataURL = canvas.toDataURL('image/png');
+    const blurredImageDataURL = canvas.toDataURL('image/jpeg', 0.4);
     const downloadLink = document.createElement('a');
     downloadLink.href = blurredImageDataURL;
-    downloadLink.download = 'blurred_image.png';
+    downloadLink.download = 'blurred_image.jpg';
+
     downloadLink.click();
+
+    setTimeout(() => {
+        loaderWrapper.style.display = 'none'
+        loader.classList.toggle('none')
+    }, 3000);
 });
