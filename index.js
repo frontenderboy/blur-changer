@@ -6,6 +6,7 @@ const fakeImg = document.querySelector('#fake-img')
 
 const loaderWrapper = document.querySelector('.loading-wrapper')
 const loader = document.querySelector('.loading')
+const errorTitle = document.querySelector('.error')
 
 rangeInput.addEventListener('input', () => {
     image.style.filter = `blur(${rangeInput.value}px)`
@@ -16,19 +17,32 @@ addFileBtn.addEventListener('change', () => {
     const files = addFileBtn.files
     const countFiles = files.length
 
+    if(files.length >= 2) {
+        errorTitle.innerHTML = `Вы выбрали ${files.length} изображения! Пожалуйста, выберете только 1 изображение!`
+        errorTitle.classList.remove('none')
+        return
+    }
+
     loaderWrapper.style.display = 'flex'
     loader.classList.toggle('none')
     
     if(!countFiles) {
-        alert('Не выбран файл!')
+        errorTitle.innerHTML = `Не выбран файл!`
+        errorTitle.classList.remove('none')
+
         loaderWrapper.style.display = 'none'
         loader.classList.toggle('none')
         return
     }
 
+    errorTitle.innerHTML = ''
+    errorTitle.classList.add('none')
+
     const selectedFile = files[0]
     if (!/^image/.test(selectedFile.type)) {
-        alert('Выбранный файл не является изображением!');
+        errorTitle.innerHTML = `Выбранный файл не является изображением!`
+        errorTitle.classList.remove('none')
+        
         loaderWrapper.style.display = 'none'
         loader.classList.toggle('none')
         return
@@ -52,7 +66,8 @@ addFileBtn.addEventListener('change', () => {
     });
 
     reader.addEventListener('error', () => {
-        alert(`Произошла ошибка при чтении файла: ${selectedFile.name}`);
+        errorTitle.innerHTML = `Произошла ошибка при чтении файла: ${selectedFile.name}`
+        errorTitle.classList.remove('none')
     });
 
     setTimeout(() => {
