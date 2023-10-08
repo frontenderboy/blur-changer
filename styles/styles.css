@@ -23,13 +23,13 @@ body {
   display: flex;
   align-items: center;
   text-align: center;
+  margin-bottom: 30px;
 }
 .error::before {
   content: "";
   display: block;
   width: 35px;
   height: 35px;
-  margin: 0 20px 15px 0;
   margin-right: 20px;
   background-image: url("../error-img.svg");
   background-repeat: no-repeat;
@@ -39,6 +39,9 @@ body {
   .error {
     flex-direction: column;
   }
+  .error::before {
+    margin-bottom: 20px;
+  }
 }
 
 .wrapper {
@@ -47,7 +50,6 @@ body {
 
 .inner-image {
   position: relative;
-  margin-top: 30px;
   height: 440px;
   border: 3px dashed #5e93e8;
   border-radius: 10px;
