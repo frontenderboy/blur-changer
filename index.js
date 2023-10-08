@@ -4,33 +4,41 @@ const rangeInput = document.querySelector('#blur-range')
 const downloadButton = document.querySelector('#download-button');
 const fakeImg = document.querySelector('#fake-img')
 
+const loaderWrapper = document.querySelector('.loading-wrapper')
+const loader = document.querySelector('.loading')
+
 rangeInput.addEventListener('input', () => {
     image.style.filter = `blur(${rangeInput.value}px)`
 })
 
 const addFileBtn = document.querySelector('.add__file-btn')
-
 addFileBtn.addEventListener('change', () => {
     const files = addFileBtn.files
     const countFiles = files.length
-    image.classList.add('after-upload')
 
-
+    loaderWrapper.style.display = 'flex'
+    loader.classList.toggle('none')
+    
     if(!countFiles) {
         alert('Не выбран файл!')
+        loaderWrapper.style.display = 'none'
+        loader.classList.toggle('none')
         return
-    } else {
-        rangeInput.classList.remove('none')
-        downloadButton.classList.remove('none')
-        innerImage.style.border = 'none'
-        innerImage.style.boxShadow = 'none'
-        document.querySelector('.upload-btn').classList.add('none')
     }
 
     const selectedFile = files[0]
     if (!/^image/.test(selectedFile.type)) {
         alert('Выбранный файл не является изображением!');
-        return;
+        loaderWrapper.style.display = 'none'
+        loader.classList.toggle('none')
+        return
+    } else {
+        image.classList.add('after-upload')
+        rangeInput.classList.remove('none')
+        downloadButton.classList.remove('none')
+        innerImage.classList.add('border-none')
+        innerImage.classList.add('box-shadow-none')
+        document.querySelector('.upload-btn').classList.add('none')
     }
 
     const reader = new FileReader();
@@ -46,12 +54,24 @@ addFileBtn.addEventListener('change', () => {
     reader.addEventListener('error', () => {
         alert(`Произошла ошибка при чтении файла: ${selectedFile.name}`);
     });
+
+    setTimeout(() => {
+        loaderWrapper.style.display = 'none'
+        loader.classList.toggle('none')
+    }, 2000);
 })
+
+let isMobile = {
+	Android: function() {return navigator.userAgent.match(/Android/i);},
+	BlackBerry: function() {return navigator.userAgent.match(/BlackBerry/i);},
+	iOS: function() {return navigator.userAgent.match(/iPhone|iPad|iPod/i);},
+	Opera: function() {return navigator.userAgent.match(/Opera Mini/i);},
+	Windows: function() {return navigator.userAgent.match(/IEMobile/i);},
+	any: function() {return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());}
+};
 
 
 downloadButton.addEventListener('click', () => {
-    const loaderWrapper = document.querySelector('.loading-wrapper')
-    const loader = document.querySelector('.loading')
     loaderWrapper.style.display = 'flex'
     loader.classList.toggle('none')
     
@@ -63,7 +83,13 @@ downloadButton.addEventListener('click', () => {
     const ctx = canvas.getContext('2d');
     canvas.width = originalWidth;
     canvas.height = originalHeight;
-    ctx.filter = `blur(${rangeInput.value}px)`;
+    
+    const rangeInputValue = +rangeInput.value + 6
+    if(isMobile.any()) {
+        ctx.filter = `blur(${+rangeInputValue + 20}px)`
+    } else {
+        ctx.filter = `blur(${rangeInputValue}px)`
+    }
     ctx.drawImage(image, 0, 0, originalWidth, originalHeight);
     const blurredImageDataURL = canvas.toDataURL('image/jpeg', 1);
     const downloadLink = document.createElement('a');
